@@ -6,7 +6,7 @@ on:
 
 jobs:
   freeze-me:
-    name: Freeze ${{ matrix.browser }}
+    name: Freeze ${{ matrix.browser }} ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
