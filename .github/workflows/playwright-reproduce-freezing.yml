@@ -1,0 +1,40 @@
+name: Reproduce Playwright Freezing
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  freeze-me:
+    name: Freeze ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ["chromium", "webkit"]
+        image: ["jammy", "focal"]
+    container:
+      image: mcr.microsoft.com/playwright:v1.24.1-${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: prepare the freezer
+        shell: bash
+        run: |
+          npm ci --ignore-scripts
+          
+      - name: make it freeze
+        shell: bash
+        timeout-minutes: 2
+        env:
+          DEBUG: 'pw:api,pw:browser'
+        run: |
+          npm run test -- --project ${{ matrix.browser }}
