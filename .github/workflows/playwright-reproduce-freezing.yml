@@ -7,7 +7,7 @@ on:
 jobs:
   freeze-me:
     name: Freeze ${{ matrix.browser }} ${{ matrix.image }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
